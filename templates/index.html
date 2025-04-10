@@ -1,0 +1,338 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PodcastFinder - Find Your Next Favorite Show</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-podcast"></i>
+                <h1>PodcastFinder</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="nav-active">Home</a></li>
+                    <li><a href="#discover">Discover</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>Discover Your Next Favorite Podcast</h1>
+                    <p>Chat with our AI assistant to find podcasts tailored to your interests and preferences.</p>
+                    <a href="#chatbot" class="cta-button">Get Started</a>
+                </div>
+
+                <div class="slideshow-container">
+                    <img class="slide active" alt="Slideshow image">
+                    <img class="slide inactive" alt="Slideshow image">
+                </div>
+
+                <script>
+                    let images = [
+                            "../static/images/1.png",
+                            "../static/images/3.png",
+                            "../static/images/5.png",
+                            "../static/images/6.png",
+                            "../static/images/gara.png",
+                            "../static/images/podcast-illustration.png"
+                        ];
+
+                        // Define standard dimensions
+                        const STANDARD_WIDTH = 500;
+                        const STANDARD_HEIGHT = 400;
+
+                        let i = 0;
+                        function startSlideshow() {
+                            // We'll use two images to create the fade effect
+                            let currentSlide = document.querySelector(".slide.active");
+                            let nextSlide = document.querySelector(".slide.inactive");
+                            
+                            // Set the next image source
+                            nextSlide.src = images[i];
+                            
+                            // Set standard dimensions for both images
+                            currentSlide.style.width = STANDARD_WIDTH + "px";
+                            currentSlide.style.height = STANDARD_HEIGHT + "px";
+                            nextSlide.style.width = STANDARD_WIDTH + "px";
+                            nextSlide.style.height = STANDARD_HEIGHT + "px";
+                            
+                            // Start the fade transition
+                            currentSlide.classList.remove("active");
+                            currentSlide.classList.add("fade-out");
+                            nextSlide.classList.remove("inactive");
+                            nextSlide.classList.add("fade-in");
+                            
+                            // After animation completes, reset classes and prepare for next slide
+                            setTimeout(() => {
+                                currentSlide.classList.remove("fade-out");
+                                currentSlide.classList.add("inactive");
+                                nextSlide.classList.remove("fade-in");
+                                nextSlide.classList.add("active");
+                                
+                                // Move to next image
+                                i = (i + 1) % images.length;
+                                
+                                // Set timeout for next slide change
+                                setTimeout(startSlideshow, 2000); // Wait 4 seconds before next transition
+                            }, 1000); // This should match the CSS transition duration
+                        }
+
+                        // Initialize slideshow once the DOM is loaded
+                        document.addEventListener("DOMContentLoaded", function() {
+                            // Set initial slide
+                            document.querySelector(".slide.active").src = images[0];
+                            i = 1; // Start with second image next
+                            setTimeout(startSlideshow, 2000); // Start first transition after 4 seconds
+                        });
+                </script>
+
+            </section>
+
+            <section id="chatbot" class="chatbot-section">
+                <div class="section-header">
+                    <h2>PodcastFinder Chatbot</h2>
+                    <p>Tell me what you're interested in, and I'll recommend podcasts just for you!</p>
+                </div>
+                
+                <div class="chatbot-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message bot-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>Hello! I'm your podcast recommendation assistant. Tell me what topics you're interested in, and I'll suggest podcasts you might enjoy!</p>
+                                <p>For example, you can say: "I like true crime and comedy podcasts" or "Recommend some science podcasts under 30 minutes."</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input">
+                        <input type="text" id="userInput" placeholder="Type your interests here..." autofocus>
+                        <button id="sendButton">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="discover" class="discover-section">
+                <div class="section-header">
+                    <h2>Browse by Category</h2>
+                    <p>Explore popular podcasts across different topics</p>
+                </div>
+                
+                <div class="category-buttons" id="categoryButtons">
+                    {% for category in categories %}
+                    <button class="category-button" data-category="{{ category }}">{{ category }}</button>
+                    {% endfor %}
+                </div>
+                
+                <div class="podcast-grid" id="podcastGrid">
+                    <!-- Podcasts will be loaded here via JavaScript -->
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                </div>
+            </section>
+
+            <section id="advanced" class="advanced-section">
+                <div class="section-header">
+                    <h2>Advanced Search</h2>
+                    <p>Fine-tune your podcast recommendations</p>
+                </div>
+                
+                <div class="advanced-search">
+                    <div class="search-filters">
+                        <div class="filter-group">
+                            <h3>Categories</h3>
+                            <div class="checkbox-grid" id="categoryCheckboxes">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <h3>Episode Length</h3>
+                            <div class="radio-options">
+                                <label>
+                                    <input type="radio" name="duration" value="any" checked>
+                                    <span>Any Length</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="duration" value="short">
+                                    <span>Short (< 30 min)</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="duration" value="medium">
+                                    <span>Medium (30-60 min)</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="duration" value="long">
+                                    <span>Long (> 60 min)</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <h3>Popularity</h3>
+                            <div class="slider-container">
+                                <input type="range" min="7" max="10" step="0.1" value="7" id="popularitySlider">
+                                <div class="slider-labels">
+                                    <span>7.0</span>
+                                    <span id="popularityValue">7.0</span>
+                                    <span>10.0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="searchButton" class="search-button">Find Podcasts</button>
+                </div>
+                
+                <div class="search-results" id="searchResults">
+                    <!-- Results will be loaded here -->
+                </div>
+            </section>
+
+            <section id="about" class="about-section">
+                <div class="section-header">
+                    <h2>About PodcastFinder</h2>
+                </div>
+                
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>
+                            PodcastFinder is an AI-powered recommendation engine designed to help you discover podcasts that match your interests. Our intelligent chatbot understands your preferences and suggests podcasts you'll love.
+                        </p>
+                        <p>
+                            Whether you're looking for true crime stories, educational content, comedy shows, or in-depth interviews, PodcastFinder can help you find your next favorite podcast in seconds.
+                        </p>
+                        <p>
+                            This project was created using Flask, natural language processing, and a curated database of popular podcasts across various categories.
+                        </p>
+                        <div>
+                            <p><b>This project was created by:</b></p>
+                            <ul class="team-list" id="team-list">
+                                
+                                <li><strong>Ayush Jha</strong><br><span>Registration number: 12315479</span></li>
+                                <li><strong>Yoshitha</strong><br><span>Registration number: 12314295</span></li>
+                                <li><strong>Siddharth Singh</strong><br><span>Registration number: 12317964</span></li>
+                                
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div class="features">
+                        <div class="feature">
+                            <i class="fas fa-robot"></i>
+                            <h3>AI-Powered Chat</h3>
+                            <p>Talk naturally with our chatbot to get personalized recommendations</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-filter"></i>
+                            <h3>Advanced Filters</h3>
+                            <p>Filter by category, episode length, and popularity</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-database"></i>
+                            <h3>Curated Selection</h3>
+                            <p>Hand-picked quality podcasts across diverse topics</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-podcast"></i>
+                    <h2>PodcastFinder</h2>
+                </div>
+        
+                <div class="footer-links">
+                    <h3>Navigation</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#discover">Discover</a></li>
+                        <li><a href="#about">About</a></li>
+                    </ul>
+                </div>
+        
+                <div class="footer-links">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li><a href="#team">Support</a></li>
+                        <li><a href="#copyright" id="privacy-policy-link">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        
+            <!-- This should NOT be another <footer> -->
+            <div id="copyright" class="copyright-text">
+                <p>© 2025 PodcastFinder. All rights reserved.</p>
+            </div>
+        </footer>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const privacyLink = document.getElementById("privacy-policy-link");
+                const copyrightEl = document.getElementById("copyright");
+        
+                privacyLink.addEventListener("click", function (e) {
+                    // Delay to allow scroll
+                    setTimeout(() => {
+                        // Restart animation
+                        copyrightEl.classList.remove("highlight");
+                        void copyrightEl.offsetWidth; // Force reflow
+                        copyrightEl.classList.add("highlight");
+                    }, 300);
+                });
+            });
+        </script>
+        
+        
+    </div>
+
+    <!-- Template for podcast cards -->
+    <template id="podcast-card-template">
+        <div class="podcast-card">
+            <div class="podcast-image">
+                <img src="" alt="">
+            </div>
+            <div class="podcast-info">
+                <h3 class="podcast-title"></h3>
+                <p class="podcast-host"></p>
+                <div class="podcast-rating">
+                    <span class="rating-value"></span>
+                    <div class="rating-stars"></div>
+                </div>
+                <div class="podcast-categories"></div>
+                <div class="podcast-duration">
+                    <i class="fas fa-clock"></i>
+                    <span></span>
+                </div>
+                <p class="podcast-description"></p>
+                <a href="#" class="listen-button" target="_blank">
+                    <i class="fab fa-spotify"></i> Listen on Spotify
+                </a>
+            </div>
+        </div>
+    </template>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
