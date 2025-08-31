@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
 <head>
@@ -95,4 +96,103 @@
         }
     </script>
 </body>
+=======
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        #results {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>API Test Tool</h1>
+    
+    <h2>Test Endpoints</h2>
+    
+    <button onclick="testEndpoint('/api/test')">Test API Connection</button>
+    <button onclick="testEndpoint('/api/categories')">Get Categories</button>
+    <button onclick="testEndpoint('/api/podcasts')">Get Podcasts</button>
+    
+    <h2>Test Chat Endpoint</h2>
+    <input type="text" id="message" placeholder="Enter a message..." style="width: 80%; padding: 8px;">
+    <button onclick="testChatEndpoint()">Send Message</button>
+    
+    <div id="results"></div>
+    
+    <script>
+        // Function to make a GET request to an endpoint
+        function testEndpoint(endpoint) {
+            document.getElementById('results').textContent = 'Loading...';
+            
+            fetch(endpoint)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('results').textContent = 
+                        'Status: Success\n\nResponse:\n' + JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('results').textContent = 
+                        'Status: Error\n\nDetails:\n' + error.message;
+                });
+        }
+        
+        // Function to test the chat endpoint
+        function testChatEndpoint() {
+            const message = document.getElementById('message').value;
+            document.getElementById('results').textContent = 'Loading...';
+            
+            fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('results').textContent = 
+                    'Status: Success\n\nResponse:\n' + JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('results').textContent = 
+                    'Status: Error\n\nDetails:\n' + error.message;
+            });
+        }
+    </script>
+</body>
+>>>>>>> 8b039f1bf8654d19691af71c5bf08f5ad4056c64
 </html>

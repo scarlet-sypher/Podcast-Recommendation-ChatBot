@@ -1,4 +1,3 @@
-# app_with_cors.py
 from flask import Flask, render_template, request, jsonify
 import json
 import random
@@ -553,4 +552,5 @@ def search_podcasts():
         })
 
 if __name__ == '__main__':
+
     app.run(debug=True)
