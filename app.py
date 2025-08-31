@@ -1,8 +1,9 @@
+# app_with_cors.py
 from flask import Flask, render_template, request, jsonify
 import json
 import random
 from collections import defaultdict
-from flask_cors import CORS 
+from flask_cors import CORS  # You'll need to install this: pip install flask-cors
 import re
 
 app = Flask(__name__)
@@ -552,5 +553,4 @@ def search_podcasts():
         })
 
 if __name__ == '__main__':
-
     app.run(debug=True)
